@@ -101,6 +101,7 @@ class MemcacheConnection extends MemcacheParser {
       const connTimeout = selfTimeout();
 
       socket.once("error", err => {
+        client.emit("error", err);
         this._shutdown("connect failed");
         clearTimeout(connTimeout);
         err.connecting = true;
@@ -114,6 +115,7 @@ class MemcacheConnection extends MemcacheParser {
         socket.removeAllListeners("error");
         this._setupConnection(socket);
         clearTimeout(connTimeout);
+        client.emit("ready", { type: "ready", socket });
         resolve(this);
       });
 
